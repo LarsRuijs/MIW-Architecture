@@ -1,0 +1,17 @@
+@startuml AirToto_C1
+!include <C4/C4_Context>
+!define DEVICONS https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons
+!define FONTAWESOME https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/font-awesome-5
+LAYOUT_WITH_LEGEND()
+
+title Webshop Context Diagram
+
+Person(customer, Customer, Customer of the webshop)
+Person(employee, Employee, employee of the webshop)
+
+System(webshop, Webshop, The complete webshop application landscape)
+
+Rel(customer, webshop, Uses, Https + Json)
+Rel(employee, webshop, Uses, Https + Json)
+
+@enduml

@@ -1,0 +1,39 @@
+@startuml C3_Uml
+!include <C4/C4_Component>
+!include <tupadr3/devicons/angular>
+!include <tupadr3/devicons/dotnet>
+!include <tupadr3/devicons/java>
+!include <tupadr3/devicons/mysql>
+!include <cloudinsight/rabbitmq>
+
+LAYOUT_WITH_LEGEND()
+
+title Kwetter - Account Service Component Diagram
+
+Container(frontend, WebApp, Angular, Kwetter frontend, angular)
+ContainerDb(accountdb, Account Database, MySql, "", mysql)
+ContainerQueue(queue, Message Broker, RabbitMQ)
+
+Container_Boundary(accountmicro, "Account Microservice") {
+    Component(authcontroller, Auth Controller, REST Controller)
+    Component(authservice, Auth Service, Service)
+    Component(accountcontroller, Account Controller, REST Controller)
+    Component(accountservice, Account Service, Service)
+    Component(accountdao, Account DAL, Data Access Object)
+    Component(accountpublisher, Account Publisher, Component)
+
+    Rel(authcontroller, authservice, Uses)
+    Rel(authservice, accountdao, Uses)
+    Rel(accountcontroller, accountservice, Uses)
+    Rel(accountservice, accountdao, Uses)
+    Rel(authservice, accountpublisher, Uses)
+    Rel(accountservice, accountpublisher, Uses)
+}
+
+Rel(frontend, authcontroller, Uses, Https + Json)
+Rel(frontend, accountcontroller, Uses, Https + Json)
+Rel(accountdao, accountdb, Reads/writes, EF Core)
+Rel(accountpublisher, queue, Transfers state, ECST pattern)
+
+
+@enduml

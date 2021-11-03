@@ -1,0 +1,72 @@
+@startuml AirToto_C2
+!include <C4/C4_Container>
+!include <tupadr3/devicons/angular>
+!include <tupadr3/devicons/dotnet>
+!include <tupadr3/devicons/mysql>
+!include <cloudinsight/rabbitmq>
+
+LAYOUT_WITH_LEGEND()
+
+title Webshop Employee System - Container Diagram
+
+' Actors
+Person(employee, Employee, Eustomer on the Webshop)
+
+System_Boundary(c1, Webshop) {
+    ' Frontend
+    Container(web, Employee WebApp, Angular, Webshop customer WebApp, angular)
+
+    ' Backend
+    Container(webbff, Employee WebApp BFF, DotNet, Backend For Frontend and Gateway, dotnet)
+    Container(authservice, Employee Auth, Dotnet, Authentication and Authorization microservice, dotnet)
+    Container(customerservice, CustomerDetailsService, DotNet, Customer details microservice, dotnet)
+    Container(productservice, ProductService, DotNet, Product microservice, dotnet)
+    Container(basketservice, BasketService, DotNet, Basket microservice, dotnet)
+    Container(favoritesservice, FavoritesService, DotNet, Favorites microservice, dotnet)
+    Container(recommendationsservice, RecommendationsService, DotNet, Recommendations microservice, dotnet)
+
+    ' Database
+    ContainerDb(webbffdb, Customer WebApp BFF Database, MySql, Holds read models, mysql)
+    ContainerDb(authdb, Customer Auth Database, Mysql, Holds customer credentials data, mysql)
+    ContainerDb(customerdb, Customer Details Database, Mysql, Holds customer account details, mysql)
+    ContainerDb(productdb, Product Database, MySql, Holds productservice microservice models, mysql)
+    ContainerDb(basketdb, Basket Database, MySql, Holds basketservice microservice models, mysql)
+    ContainerDb(favoritesdb, Favorites Database, MySql, Holds favoritesservice microservice models, mysql)
+    ContainerDb(recommendationsdb, Reccomendations Database, Neo4j, Holds recommendationsservice microservice data)
+
+    ' Queue
+    ' ContainerQueue(queue, Message Broker, RabbitMQ, Eventbus, rabbitmq)
+}
+
+' Relations actor
+Rel(employee, web, Uses, Browser)
+
+' Relations web
+Rel(web, webbff, Uses gateway, Https + Json)
+Rel(web, authservice, Authentication, Https + Json)
+
+' Relations gateway
+Rel(webbff, customerservice, Calls, gRPC)
+Rel(webbff, productservice, Calls, gRPC)
+Rel(webbff, basketservice, Calls, gRPC)
+Rel(webbff, favoritesservice, Calls, gRPC)
+Rel(webbff, recommendationsservice, Calls, gRPC)
+
+' Relations database
+Rel_R(webbff, webbffdb, Uses, odbc)
+Rel_R(authservice, authdb, Uses, odbc)
+Rel(customerservice, customerdb, Uses, odbc)
+Rel(productservice, productdb, Uses, odbc)
+Rel(basketservice, basketdb, Uses, odbc)
+Rel(favoritesservice, favoritesdb, Uses, odbc)
+Rel(recommendationsservice, recommendationsdb, Uses, odbc)
+
+' Relations messaging queue
+' Rel_L(webbff, queue, Transfers state, ECST pattern)
+' Rel_L(authservice, queue, Transfers state, ECST pattern)
+' Rel_L(productservice, queue, Transfers state, ECST pattern)
+' Rel_L(basketservice, queue, Transfers state, ECST pattern)
+' Rel_L(favoritesservice, queue, Transfers state, ECST pattern)
+' Rel_L(recommendationsservice, queue, Transfers state, ECST pattern)
+
+@enduml

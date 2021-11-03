@@ -1,0 +1,33 @@
+@startuml AirToto_C2
+!include <C4/C4_Container>
+!include <tupadr3/devicons/angular>
+!include <tupadr3/devicons/dotnet>
+!include <tupadr3/devicons/mysql>
+!include <cloudinsight/rabbitmq>
+
+LAYOUT_WITH_LEGEND()
+
+title Webshop Backend Messaging - Container Diagram
+
+
+System_Boundary(c1, Webshop) {
+    ' Backend
+    Container(customerservice, CustomerDetailsService, DotNet, Customer details microservice, dotnet)
+    Container(productservice, ProductService, DotNet, Product microservice, dotnet)
+    Container(basketservice, OrderService, DotNet, Order microservice, dotnet)
+    Container(favoritesservice, FavoritesService, DotNet, Favorites microservice, dotnet)
+    Container(recommendationsservice, RecommendationsService, DotNet, Recommendations microservice, dotnet)
+
+    ' Queue
+    ContainerQueue(queue, Message Broker, RabbitMQ, Eventbus, rabbitmq)
+}
+
+' Relations messaging queue
+Rel_D(customerservice, queue, Transfers state)
+Rel_D(productservice, queue, Transfers state)
+Rel_L(queue, basketservice, Receives state)
+Rel_R(basketservice, queue, Transfers state)
+Rel_D(favoritesservice, queue, Transfers state)
+Rel_D(queue, recommendationsservice, Receives states)
+
+@enduml

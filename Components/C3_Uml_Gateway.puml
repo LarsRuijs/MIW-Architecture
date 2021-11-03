@@ -1,0 +1,81 @@
+@startuml C3_Uml
+!include <C4/C4_Component>
+!include <tupadr3/devicons/angular>
+!include <tupadr3/devicons/dotnet>
+!include <tupadr3/devicons/java>
+!include <tupadr3/devicons/msql_server>
+!include <cloudinsight/rabbitmq>
+
+LAYOUT_WITH_LEGEND()
+
+title Webshop - Customer WebApp BFF Component Diagram
+
+Container(frontend, WebApp, Angular, recommendationster frontend, angular)
+
+Container(productmicroservice, ProductService, Java Spring, Product Microservice, java)
+Container(basketmicroservice, OrderService, Java Spring, Order Microservice, java)
+Container(favoritesmicroservice, FavoritesService, Java Spring, Favorites Microservice, java)
+
+ContainerDb(gatewaydb, BFF Database, MySql, Holds read models, msql_server)
+
+ContainerQueue(queue, Message Broker, RabbitMQ)
+
+Container_Boundary(gateway, "Customer WebApp BFF") {
+
+    Component(productcontroller, ProductController, REST Controller)
+    Component(ordercontroller, OrderController, REST Controller)
+    Component(favoritescontroller, FavoritesController, REST Controller)
+
+    Component(productservice, ProductService, Service Component)
+    Component(orderservice, OrderService, Service Component)
+    Component(favoritesservice, FavoritesService, Service Component)
+    
+    Component(productcomponent, ProductAgent, gRPC Agent)
+    Component(ordercomponent, OrderAgent, gRPC Agent)
+    Component(favoritescomponent, FavoritesAgent, gRPC Agent)
+    
+    Component(productdao, ProductDAL, Data Access Object)
+    Component(orderdao, OrderDAL, Data Access Object)
+    Component(favoritesdao, FavoritesDAL, Data Access Object)
+
+    Component(productconsumer, ProductConsumer, Messaging Component)
+    Component(orderconsumer, OrderConsumer, Messaging Component)
+    Component(favoritesconsumer, FavoritesConsumer, Messaging Component)
+
+    Rel(productcontroller, productservice, Uses)
+    Rel(ordercontroller, orderservice, Uses)
+    Rel(favoritescontroller, favoritesservice, Uses)
+    
+    Rel(productservice, productcomponent, Uses)
+    Rel(orderservice, ordercomponent, Uses)
+    Rel(favoritesservice, favoritescomponent, Uses)
+    
+    Rel(productservice, productdao, Uses)
+    Rel(orderservice, orderdao, Uses)
+    Rel(favoritesservice, favoritesdao, Uses)
+    
+    Rel(productconsumer, productdao, Uses)
+    Rel(orderconsumer, orderdao, Uses)
+    Rel(favoritesconsumer, favoritesdao, Uses)
+    
+}
+
+Rel(frontend, productcontroller, Uses, Https + Json)
+Rel(frontend, ordercontroller, Uses, Https + Json)
+Rel(frontend, favoritescontroller, Uses, Https + Json)
+
+Rel(productcomponent, productmicroservice, Calls, gRPC)
+Rel(ordercomponent, basketmicroservice, Calls, gRPC)
+Rel(favoritescomponent, favoritesmicroservice, Calls, gRPC)
+
+Rel(productdao, gatewaydb, Reads/writes, JPA)
+Rel(orderdao, gatewaydb, Reads/writes, JPA)
+Rel(favoritesdao, gatewaydb, Reads/writes, JPA)
+
+Rel(queue, productconsumer, Transfers state, ECST pattern)
+Rel(queue, orderconsumer, Transfers state, ECST pattern)
+Rel(queue, favoritesconsumer, Transfers state, ECST pattern)
+
+
+
+@enduml

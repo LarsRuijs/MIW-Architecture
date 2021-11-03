@@ -1,0 +1,33 @@
+@startuml C3_Uml
+!include <C4/C4_Component>
+!include <tupadr3/devicons/angular>
+!include <tupadr3/devicons/dotnet>
+!include <tupadr3/devicons/java>
+!include <tupadr3/devicons/mysql>
+!include <cloudinsight/rabbitmq>
+
+LAYOUT_WITH_LEGEND()
+
+title Webshop - Product Service Component Diagram
+
+Container(bff, WebshopBFF, Dotnet, API Gateway, dotnet)
+ContainerDb(db, Product Database, Mysql, "", mysql)
+ContainerQueue(queue, Message Broker, RabbitMQ)
+
+Container_Boundary(productmicroservice, "Product Service") {
+    Component(controller, ProductController, gRPC Controller)
+    Component(service, ProductService, Service component)
+    Component(dao, ProductDAL, Data Access Object)
+    Component(publisher, ProductPublisher, Messaging Component)
+
+    Rel(controller, service, Uses)
+    Rel(service, dao, Uses)
+    Rel(service, publisher, Uses)
+}
+
+Rel(bff, controller, Calls, gRPC)
+Rel(dao, db, Reads/writes, JPA)
+Rel(publisher, queue, Transfers state, ECST pattern)
+
+
+@enduml
