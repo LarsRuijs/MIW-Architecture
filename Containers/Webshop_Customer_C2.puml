@@ -52,12 +52,12 @@ Rel(webbff, favoritesservice, Calls, gRPC)
 Rel(webbff, recommendationsservice, Calls, gRPC)
 
 ' Relations database
-Rel(authservice, authdb, Uses, odbc)
-Rel(customerservice, customerdb, Uses, odbc)
-Rel(productservice, productdb, Uses, odbc)
-Rel(basketservice, basketdb, Uses, odbc)
-Rel(favoritesservice, favoritesdb, Uses, odbc)
-Rel(recommendationsservice, recommendationsdb, Uses, odbc)
+Rel(authservice, authdb, Uses, EF Core)
+Rel(customerservice, customerdb, Uses, EF Core)
+Rel(productservice, productdb, Uses, EF Core)
+Rel(basketservice, basketdb, Uses, EF Core)
+Rel(favoritesservice, favoritesdb, Uses, EF Core)
+Rel(recommendationsservice, recommendationsdb, Uses, EF Core)
 
 ' Relations messaging queue
 ' Rel_L(webbff, queue, Transfers state, ECST pattern)
