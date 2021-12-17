@@ -17,8 +17,8 @@ System_Boundary(c1, Webshop) {
     Container(web, Customer WebApp, Angular, Webshop customer WebApp, angular)
 
     ' Backend
-    Container(webbff, Customer WebApp BFF, DotNet, Backend For Frontend and Gateway, dotnet)
-    Container(authservice, Customer Auth, Dotnet, Authentication and Authorization microservice, dotnet)
+    Container(webbff, Customer WebApp Gateway, DotNet, Backend For Frontend and Gateway, dotnet)
+    Container(authservice, CustomerAuthService, Dotnet, Authentication and Authorization microservice, dotnet)
     Container(customerservice, CustomerDetailsService, DotNet, Customer details microservice, dotnet)
     Container(productservice, ProductService, DotNet, Product microservice, dotnet)
     Container(basketservice, OrderService, DotNet, Order microservice, dotnet)
@@ -42,9 +42,9 @@ Rel(customer, web, Uses, Browser)
 
 ' Relations web
 Rel(web, webbff, Uses gateway, Https + Json)
-Rel(web, authservice, Authentication, Https + Json)
 
 ' Relations gateway
+Rel(webbff, authservice, Calls, gRPC)
 Rel(webbff, customerservice, Calls, gRPC)
 Rel(webbff, productservice, Calls, gRPC)
 Rel(webbff, basketservice, Calls, gRPC)
@@ -52,7 +52,7 @@ Rel(webbff, favoritesservice, Calls, gRPC)
 Rel(webbff, recommendationsservice, Calls, gRPC)
 
 ' Relations database
-Rel_L(authservice, authdb, Uses, odbc)
+Rel(authservice, authdb, Uses, odbc)
 Rel(customerservice, customerdb, Uses, odbc)
 Rel(productservice, productdb, Uses, odbc)
 Rel(basketservice, basketdb, Uses, odbc)
